@@ -5,28 +5,51 @@
 'use strict';
 
 var React = require('react-native');
+var FeaturedTab = require('./FeaturedTab.js');
+var SearchTab = require('./SearchTab.js');
+
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
+  TabBarIOS
 } = React;
 
 var Qiita_Reader = React.createClass({
+  getInitialState: function(){
+    return(
+      {
+        selectedTab: 'FeaturedTab'
+      }
+    );
+  },
   render: function() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
+      <TabBarIOS selectedTab={this.state.selectedTab}>
+        <TabBarIOS.Item
+          selected={this.state.selectedTab === 'FeaturedTab'}
+          icon={{uri: 'featured'}}
+          onPress={() => {
+            this.setState(
+              {selectedTab: 'FeaturedTab'}
+            );
+          }}
+        >
+          <FeaturedTab />
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          selected={this.state.selectedTab === 'SearchTab'}
+          icon={{uri: 'search'}}
+          onPress={() => {
+            this.setState(
+              {selectedTab: 'SearchTab'}
+            );
+          }}
+        >
+          <SearchTab />
+        </TabBarIOS.Item>
+      </TabBarIOS>
     );
   }
 });
