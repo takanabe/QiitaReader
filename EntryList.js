@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('react-native');
+var EntryDetail = require('./EntryDetail.js');
 
 var {
   StyleSheet,
@@ -45,7 +46,7 @@ var EntryList = React.createClass({
   },
   renderEntry: function(entry){
     return(
-      <TouchableHighlight>
+      <TouchableHighlight onPress={() => this.onPress(entry)}>
         <View>
           <View style={styles.container}>
             <Image
@@ -60,6 +61,13 @@ var EntryList = React.createClass({
           </View>
       </TouchableHighlight>
     );
+  },
+  onPress: function(entry) {
+    this.props.navigator.push({
+      title: entry.title,
+      component: EntryDetail,
+      passProps: { url: entry.url }
+    })
   },
   viewLoadingData: function(){
     return(
