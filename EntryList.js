@@ -12,26 +12,11 @@ var {
   View,
   Image,
   ListView,
-  TouchableHighlight
+  TouchableHighlight,
+  ActivityIndicatorIOS
 } = React;
 
-var TEST_ENTRY_DATA = [
-  {
-    user: {
-      profile_image_url: 'http://facebook.github.io/react/img/logo_og.png',
-      id: 'takanabe1'
-    },
-    title: 'React Native Test1!!'
-  },
-  {
-    user: {
-      profile_image_url: 'http://facebook.github.io/react/img/logo_og.png',
-      id: 'takanabe2'
-    },
-    title: 'React Native Test2!!'
-  }
-];
-var entries = TEST_ENTRY_DATA;
+var QIITA_REACTJS_ENTRY_URL = "https://qiita.com/api/v2/tags/reactjs/items";
 
 var EntryList = React.createClass({
   getInitialState: function(){
@@ -39,14 +24,24 @@ var EntryList = React.createClass({
       {
         dataSource: new ListView.DataSource({
           rowHasChanged: (row1, row2) => row1 !== row2
-        })
+        }),
+        isLoaded: false
       }
     );
   },
   componentDidMount: function(){
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(entries)
-    });
+    this.fetchData();
+  },
+  fetchData: function() {
+    fetch(QIITA_REACTJS_ENTRY_URL)
+    .then((response) => response.json())
+    .then((responseData) => {
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(responseData),
+        isLoaded: true
+      });
+    })
+    .done();
   },
   renderEntry: function(entry){
     return(
@@ -62,18 +57,37 @@ var EntryList = React.createClass({
             </View>
           </View>
           <View style={styles.separator}/>
-        </View>
+          </View>
       </TouchableHighlight>
     );
   },
-  render: function() {
+  viewLoadingData: function(){
     return(
-      <ListView
-        style={styles.listView}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderEntry}
+      <View style={styles.activityIndicator}>
+      <ActivityIndicatorIOS
+      animating={1}
+      size={'large'}
       />
+      <View>
+         <Text style={styles.loadingMessage}>Pleae wait a second ...</Text>
+      </View>
+      </View>
     );
+  },
+  render: function() {
+    if(this.state.isLoaded){
+      return(
+        <ListView
+          style={styles.listView}
+          dataSource={this.state.dataSource}
+          renderRow={this.renderEntry}
+        />
+      );
+    }else{
+      return(
+        this.viewLoadingData()
+      );
+    };
   }
 });
 
@@ -107,6 +121,17 @@ var styles = StyleSheet.create({
     listView: {
       backgroundColor: '#F5FCFF'
     },
+    activityIndicator: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingMessage: {
+      flex: 1,
+      fontSize: 20,
+      color: '#656565',
+    }
 });
 
 module.exports = EntryList;
