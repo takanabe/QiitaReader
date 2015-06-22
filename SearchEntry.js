@@ -67,7 +67,7 @@ var SearchEntry = React.createClass({
               size={'large'}
               />
               <View>
-                 <Text style={styles.loadingMessage}>Pleae wait a second ...</Text>
+                 <Text style={styles.loadingMessage}>Please wait a second ...</Text>
               </View>
               </View>
             );
